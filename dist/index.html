@@ -1,0 +1,136 @@
+<!doctype html>
+<html ng-app="htmltree">
+<!--
+
+Source code for this page is on https://github.com/peterbe/htmltree
+
+version: 0d50b8cd72
+https://github.com/peterbe/htmltree/compare/0d50b8cd72...HEAD
+-->
+<head>
+<meta charset="utf-8">
+<title>HTML Tree</title>
+<link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
+<link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+<link rel="stylesheet" href="/static/style-1320a4f.min.css">
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-94373-15', 'peterbe.com');
+  ga('send', 'pageview');
+</script>
+
+
+</head>
+<body class="guide" id="example" ng-controller="AppController">
+
+  <div class="ui fixed transparent inverted main menu">
+    <div class="container">
+      <a class="launch item">HTML Tree</a>
+      <div class="title item">
+        <a href="/" ng-click="reset()"><b>HTML Tree</b></a>
+        <!-- <i>To find out which DOM nodes weigh the most</i> -->
+      </div>
+
+
+
+      <div class="right menu">
+        <a class="popup icon github item" data-content="View project on Github" title="View project on Github" href="https://github.com/peterbe/htmltree">
+          <i class="icon github"></i>
+        </a>
+        <a class="popup icon github item" data-content="Made by @peterbe" title="Made by @peterbe" href="https://www.peterbe.com">
+          <img src="/static/images/peterbecom.png" alt="Peterbe.com" width="16">
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="segment" ng-class="{bigger: !drawn}">
+    <div class="container">
+
+        <form ng-submit="submitForm()">
+            <div class="ui fluid form">
+              <div class="field">
+                <!-- <label>URL</label> -->
+                <div class="ui left input">
+                  <input name="url" ng-model="url" placeholder="https://..." type="text" style="font-size:150%">
+                </div>
+              </div>
+            </div>
+            <p ng-show="drawn" class="small">
+                Downloaded <b>{{ stats.size }}</b>.
+                <span ng-if="stats.from_cache">From server cache.</span>
+                <span ng-if="stats.took">Took <b>{{ stats.took }} seconds</b>.</span>
+            </p>
+        </form>
+
+        <p ng-show="!url.length" style="margin-top:40px" ng-cloak>
+            <b>Tip!</b>
+            Type in a URL in the box above and hit Enter.
+	    <a href="?url=https://www.peterbe.com" ng-click="sampleSubmission('https://www.peterbe.com')">For example</a>
+        </p>
+
+        <div ng-show="!url.length && recent.length" style="margin-top:40px" ng-cloak>
+            <p><b>Other recent submissions</b></p>
+            <ul>
+                <li ng-repeat="url_ in recent">
+                    <a href="?url={{ url_ }}" ng-click="sampleSubmission(url_)">{{ url_ }}</a>
+                </li>
+            </ul>
+        </div>
+
+
+    </div>
+  </div>
+
+<div class="container main" style="width:{{ page_width }}px">
+
+    <div id="server-error" ng-show="server_error" ng-cloak>
+        <h4>Oh nasty server error!</h4>
+        <p ng-if="url">
+            It appears something went horribly wrong trying to analyze
+            <code>{{ url }}</code>.
+        </p>
+        <p><a href="/" ng-click="reset()">Clear</a></p>
+    </div>
+
+    <h4 ng-show="loading" style="text-align:center" ng-cloak>Turning your URL into a tree...</h4>
+
+    <div id="balls" ng-show="loading" ng-cloak>
+      <div class='wrap' id='wrap1'>
+        <div class='ball' id='ball1'></div>
+      </div>
+
+      <div class='wrap' id='wrap2'>
+        <div class='ball' id='ball2'></div>
+      </div>
+
+      <div class='wrap' id='wrap3'>
+        <div class='ball' id='ball3'></div>
+      </div>
+
+      <div class='wrap' id='wrap4'>
+        <div class='ball' id='ball4'></div>
+      </div>
+
+    </div>
+
+    <div id="tree"></div>
+    <!-- <div id="treemap"></div> -->
+
+</div>
+
+<!-- <div id="jobs-in-queue">
+    <p>Jobs in queue: {{ jobs_in_queue }}</p>
+</div> -->
+
+<script src="/static/vendor-a9f2185.min.js"></script>
+
+<script src="/static/bundle-0737225.min.js"></script>
+
+</body>
+</html>

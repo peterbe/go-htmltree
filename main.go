@@ -144,6 +144,16 @@ func TreeInfo(ctx *iris.Context) {
 	})
 }
 
+// func Index(ctx *iris.Context) {
+// 	var context struct{}
+// 	ctx.MustRender("index.html", context)
+// 	// html, err := ioutil.ReadFile("dist/index.html")
+// 	// if err != nil {
+// 	//     panic(err)
+// 	// }
+// 	// ctx.Write(string(html))
+// }
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -151,15 +161,17 @@ func main() {
 	}
 	debug := os.Getenv("DEBUG")
 	irisConfig := config.Iris{
-		DisablePathCorrection: true,
-		IsDevelopment:         debug == "true",
+		// DisablePathCorrection: true,
+		IsDevelopment: debug == "true",
 	}
 	api := iris.New(irisConfig)
 	api.Get("/tree", TreeInfo)
 	api.Post("/tree", Tree)
-	api.Static("/node_modules", "./node_modules/", 1)
-	api.Static("/client/", "./client/", 1)
-	api.Static("/static", "./client/static/", 1)
+	// api.Static("/node_modules", "./node_modules/", 1)
+	// api.Static("/static", "./dist/static/", 1)
+	// api.StaticWeb("/", "./dist", 0)
+	api.StaticServe("./dist")
+	// api.Get("/", Index)
 	api.Listen("0.0.0.0:" + port)
 
 }

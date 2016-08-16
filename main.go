@@ -113,21 +113,10 @@ func GetChildren(url string) (Child, error) {
                 humanize.Bytes(uint64(size)),
             }
             return root, nil
-            // js, _ := json.Marshal(root)
-        	// fmt.Printf("%s", js)
         }
     }
 
     return root, errors.New("No html root")
-}
-
-
-func Index(ctx *iris.Context) {
-    // ctx.Render("index.html", struct { Name string }{ Name: "iris" })
-    // maybe ctx.Render("index.html", nil)
-    var context struct{}
-    log.Println("Trying to render index.html")
-    ctx.Render("index.html", context)
 }
 
 
@@ -176,33 +165,12 @@ func main()  {
         IsDevelopment: debug == "true",
         // IndentJSON: true,
     }
-    iris.UseTemplate(irishtml.New(irishtml.Config{
-		Layout: "layout.html",
-        })).Directory("./client", ".html")
     api := iris.New(irisConfig)
-
-
-    // api.UseTemplate(irishtml.New(irishtml.Config{})).Directory("./client", ".html")
-    // log.Println(debug)
-    // if debug == "true" {
-    //     log.Println("Running in debug mode")
-    //     // iris.Logger.Infof("Running in debug mode")
-    //     api.Config.Render.Template.IsDevelopment = true
-    //     api.Config.Render.Rest.IndentJSON = true
-    // }
-
     api.Get("/tree", TreeInfo)
     api.Post("/tree", Tree)
     api.Static("/node_modules", "./node_modules/", 1)
     api.Static("/client/", "./client/", 1)
     api.Static("/static", "./client/static/", 1)
-    api.Get("/", Index)
     api.Listen("0.0.0.0:" + port)
-    // root, err := GetChildren(url)
-    // if err != nil {
-    //     panic(err)
-    // }
-    // js, _ := json.Marshal(root)
-    // fmt.Printf("%s", js)
 
 }

@@ -8,6 +8,10 @@
 			"Rev": "cc2954064ec9ea8d93917f0f87456e11d7b881ad"
 		},
 		{
+			"ImportPath": "github.com/coocood/freecache",
+			"Rev": "1aa53c26cb85c33eef6d832305447982e95f844c"
+		},
+		{
 			"ImportPath": "github.com/davecgh/go-spew/spew",
 			"Comment": "v1.0.0",
 			"Rev": "6cf5744a041a0022271cefed95ba843f6d87fd51"
@@ -187,6 +191,10 @@
 		{
 			"ImportPath": "github.com/shurcooL/sanitized_anchor_name",
 			"Rev": "10ef21a441db47d8b13ebcc5fd2310f636973c77"
+		},
+		{
+			"ImportPath": "github.com/spaolacci/murmur3",
+			"Rev": "0d12bf811670bf6a1a63828dfbd003eded177fce"
 		},
 		{
 			"ImportPath": "github.com/stretchr/testify/assert",

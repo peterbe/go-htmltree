@@ -8,6 +8,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/config"
 	"golang.org/x/net/html"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -144,15 +145,9 @@ func TreeInfo(ctx *iris.Context) {
 	})
 }
 
-// func Index(ctx *iris.Context) {
-// 	var context struct{}
-// 	ctx.MustRender("index.html", context)
-// 	// html, err := ioutil.ReadFile("dist/index.html")
-// 	// if err != nil {
-// 	//     panic(err)
-// 	// }
-// 	// ctx.Write(string(html))
-// }
+func Index(ctx *iris.Context) {
+	ctx.ServeFile("./dist/index.html", false)
+}
 
 func main() {
 	port := os.Getenv("PORT")
@@ -167,11 +162,8 @@ func main() {
 	api := iris.New(irisConfig)
 	api.Get("/tree", TreeInfo)
 	api.Post("/tree", Tree)
-	// api.Static("/node_modules", "./node_modules/", 1)
-	// api.Static("/static", "./dist/static/", 1)
-	// api.StaticWeb("/", "./dist", 0)
-	api.StaticServe("./dist")
-	// api.Get("/", Index)
+	api.Static("/static", "./dist/static", 1)
+	api.Get("/", Index)
 	api.Listen("0.0.0.0:" + port)
 
 }

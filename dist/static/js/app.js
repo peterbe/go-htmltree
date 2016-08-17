@@ -46,6 +46,7 @@ angular.module('htmltree', [
         this.$.url = '';
         this.$.drawn = false;
         this.$.server_error = false;
+        this.$.bad_request_error = false;
         this.$.page_width = 960;
         this.$.stats = {};
         d3.select('#tree svg').remove();
@@ -82,6 +83,8 @@ angular.module('htmltree', [
         .error(function(data, status, headers) {
             if (status === 500) {
                 this.$.server_error = true;
+            } else if (status === 400) {
+                this.$.bad_request_error = true;
             }
             console.error(data);
             console.error('Status', status);

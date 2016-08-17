@@ -123,6 +123,15 @@ type URL struct {
 	URL string `json:"url"`
 }
 
+func StringInStrings(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
 func Tree(ctx *iris.Context) {
 	url := URL{}
 	jsonErr := ctx.ReadJSON(&url)
@@ -141,16 +150,17 @@ func Tree(ctx *iris.Context) {
 		} else {
 			cacheKey := []byte("recent")
 			got, err := cache.Get(cacheKey)
-			var recent string
-			if err != nil {
-				// never stored before
-				recent = ""
-			} else {
-				// prepare concatenation
-				recent = fmt.Sprintf("|%s", string(got))
+			// var recent string
+			recent := []string{}
+			if err == nil {
+				recent = strings.Split(string(got), "|")
 			}
-			recent = fmt.Sprintf("%s%s", url.URL, recent)
-			cache.Set(cacheKey, []byte(recent), 60*60*24*7) // 7 days
+			if StringInStrings(recent, url.URL) == false {
+				recent = append(recent, url.URL)
+			}
+			// only update the cache if it wasn't already in the list
+			recentAsString := strings.Join(recent, "|")
+			cache.Set(cacheKey, []byte(recentAsString), 60*60*24*7) // 7 days
 			ctx.JSON(iris.StatusOK, child)
 		}
 	}
@@ -161,6 +171,10 @@ func TreeInfo(ctx *iris.Context) {
 	cacheKey := []byte("recent")
 	if got, err := cache.Get(cacheKey); err == nil {
 		recent = strings.Split(string(got), "|")
+		// reverse so those added most recently appear first
+		for i, j := 0, len(recent)-1; i < j; i, j = i+1, j-1 {
+			recent[i], recent[j] = recent[j], recent[i]
+		}
 	}
 	ctx.JSON(iris.StatusOK, iris.Map{
 		"jobs":   0,

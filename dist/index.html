@@ -4,8 +4,8 @@
 
 Source code for this page is on https://github.com/peterbe/htmltree
 
-version: 7b16b0edeb
-https://github.com/peterbe/htmltree/compare/7b16b0edeb...HEAD
+version: a5679cc4a9
+https://github.com/peterbe/htmltree/compare/a5679cc4a9...HEAD
 -->
 <head>
 <meta charset="utf-8">
@@ -94,6 +94,16 @@ https://github.com/peterbe/htmltree/compare/7b16b0edeb...HEAD
         <p ng-if="url">
             It appears something went horribly wrong trying to analyze
             <code>{{ url }}</code>.
+        </p>
+        <p><a href="/" ng-click="reset()">Clear</a></p>
+    </div>
+
+    <div id="bad-request-error" ng-show="bad_request_error" ng-cloak>
+        <h4>Unable to download that URL!</h4>
+        <p ng-if="url">
+            The server was not able to download that URL. Either because
+            it doesn't exist or because it doesn't want to be downloaded.
+            <a ng-href="{{ url }}">{{ url }}</a>.
         </p>
         <p><a href="/" ng-click="reset()">Clear</a></p>
     </div>

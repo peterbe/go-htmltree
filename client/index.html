@@ -96,6 +96,16 @@ https://github.com/peterbe/htmltree/compare/$git_revision_short...HEAD
         <p><a href="/" ng-click="reset()">Clear</a></p>
     </div>
 
+    <div id="bad-request-error" ng-show="bad_request_error" ng-cloak>
+        <h4>Unable to download that URL!</h4>
+        <p ng-if="url">
+            The server was not able to download that URL. Either because
+            it doesn't exist or because it doesn't want to be downloaded.
+            <a ng-href="{{ url }}">{{ url }}</a>.
+        </p>
+        <p><a href="/" ng-click="reset()">Clear</a></p>
+    </div>
+
     <h4 ng-show="loading" style="text-align:center" ng-cloak>Turning your URL into a tree...</h4>
 
     <div id="balls" ng-show="loading" ng-cloak>

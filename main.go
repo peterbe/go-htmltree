@@ -8,7 +8,6 @@ import (
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/config"
 	"golang.org/x/net/html"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"

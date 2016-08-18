@@ -19,7 +19,6 @@ import (
 type Child struct {
 	Name     string  `json:"name"`
 	Value    int     `json:"value"`
-	Ratio    float64 `json:"percentage"`
 	Children []Child `json:"children"`
 	Size     string  `json:"_size"`
 }
@@ -89,7 +88,6 @@ func GetChildren(url string) (Child, Performance, error) {
 				child := Child{
 					DescribeNode(c, size),
 					size,
-					float64(size) / float64(parentsize),
 					subChildren,
 					humanize.Bytes(uint64(size)),
 				}
@@ -109,7 +107,6 @@ func GetChildren(url string) (Child, Performance, error) {
 			root := Child{
 				DescribeNode(c, size),
 				size,
-				1.0,
 				f(c, 0, size),
 				humanize.Bytes(uint64(size)),
 			}

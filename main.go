@@ -63,9 +63,7 @@ func GetChildren(url string) (Child, Performance, error) {
 	if err != nil {
 		panic(err)
 	}
-	// t1 := time.Now()
 	t2 := time.Now()
-	// elapsed := time.Since(t0)
 
 	var f func(*html.Node, int, int) []Child
 	f = func(n *html.Node, depth, parentsize int) []Child {

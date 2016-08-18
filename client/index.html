@@ -62,7 +62,20 @@ https://github.com/peterbe/go-htmltree/compare/$git_revision_short...HEAD
             <p ng-show="drawn" class="small">
                 Downloaded <b>{{ stats.size }}</b>.
                 <span ng-if="stats.from_cache">From server cache.</span>
-                <span ng-if="stats.took">Took <b>{{ stats.took }} seconds</b>.</span>
+                <span
+                  ng-if="stats.took && !stats._show_advanced"
+                  ng-click="toggleAdvancedStats()"
+                  title="Click to show more details stats about how long it took">
+                  Took <b>{{ stats.took }} seconds</b>.
+                </span>
+                <span
+                  ng-if="stats.took && stats._show_advanced"
+                  ng-click="toggleAdvancedStats()"
+                  title="Closed advanced stats">
+                  <b>{{ stats.took_download }}ms</b> to download,
+                  <b>{{ stats.took_parse }}ms</b> to parse,
+                  <b>{{ stats.took_process }}ms</b> to parse.
+                </span>
             </p>
         </form>
 

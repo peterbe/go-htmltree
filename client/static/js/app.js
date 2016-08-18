@@ -61,6 +61,10 @@ angular.module('htmltree', [
         }
     },
 
+    toggleAdvancedStats: function() {
+      this.$.stats._show_advanced = !this.$.stats._show_advanced;
+    },
+
     _drawTree: function(url) {
         this.$.loading = true;
         this.$.server_error = false;
@@ -71,14 +75,17 @@ angular.module('htmltree', [
             {url: url, max_depth: this.$.max_depth, treemap: true}
         )
         .success(function(response) {
-            makeTree(response, '#tree', this.$.page_width);
+            makeTree(response.nodes, '#tree', this.$.page_width);
+            var totalTime = response.performance.download +
+              response.performance.parse +
+              response.performance.process;
             this.$.stats = {
-                from_cache: response._from_cache,
-                size: response._size,
-                took: response._took / 1000, // displayed in seconds
+                size: response.nodes._size, // root node's size
+                took: totalTime / 1000, // displayed in seconds
+                took_download: response.performance.download,
+                took_parse: response.performance.parse,
+                took_process: response.performance.process,
             };
-            // makeTreemap(response, '#treemap', window.innerWidth - 40);
-            // makeTreemap(response, '#treemap');
         }.bind(this))
         .error(function(data, status, headers) {
             if (status === 500) {

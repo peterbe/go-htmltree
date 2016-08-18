@@ -17,13 +17,17 @@ import (
 )
 
 type Child struct {
-	Name      string        `json:"name"`
-	Value     int           `json:"value"`
-	Ratio     float64       `json:"percentage"`
-	Children  []Child       `json:"children"`
-	FromCache bool          `json:"_from_cache"`
-	Took      time.Duration `json:"_took"`
-	Size      string        `json:"_size"`
+	Name     string  `json:"name"`
+	Value    int     `json:"value"`
+	Ratio    float64 `json:"percentage"`
+	Children []Child `json:"children"`
+	Size     string  `json:"_size"`
+}
+
+type Performance struct {
+	DownloadTime time.Duration `json:"download"`
+	ParseTime    time.Duration `json:"parse"`
+	ProcessTime  time.Duration `json:"process"`
 }
 
 func DescribeNode(n *html.Node, size int) string {
@@ -36,11 +40,12 @@ func DescribeNode(n *html.Node, size int) string {
 	return fmt.Sprintf("<%s%s> %s", n.Data, attrs, humanize.Bytes(uint64(size)))
 }
 
-func GetChildren(url string) (Child, error) {
+func GetChildren(url string) (Child, Performance, error) {
 	if !strings.Contains(url, "://") {
 		url = "http://" + url
 	}
 	var root Child
+	var performance Performance
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -51,10 +56,10 @@ func GetChildren(url string) (Child, error) {
 	t0 := time.Now()
 	response, err := client.Do(req)
 	if err != nil {
-		return root, err
+		return root, performance, err
 	}
 	defer response.Body.Close()
-	// t1 := time.Now()
+	t1 := time.Now()
 	doc, err := html.Parse(response.Body)
 	if err != nil {
 		panic(err)
@@ -68,11 +73,11 @@ func GetChildren(url string) (Child, error) {
 		var children []Child
 		for c := n.FirstChild; c != nil; c = c.NextSibling {
 			if c.Type == html.ElementNode {
-				t0 := time.Now()
+				// t0 := time.Now()
 				buf := new(bytes.Buffer)
 				html.Render(buf, c)
 				renderedHtml := buf.String()
-				t1 := time.Now()
+				// t1 := time.Now()
 				size := len(renderedHtml)
 				var subChildren []Child
 				if depth < 5 {
@@ -86,8 +91,6 @@ func GetChildren(url string) (Child, error) {
 					size,
 					float64(size) / float64(parentsize),
 					subChildren,
-					false,
-					t1.Sub(t0),
 					humanize.Bytes(uint64(size)),
 				}
 				children = append(children, child)
@@ -108,15 +111,17 @@ func GetChildren(url string) (Child, error) {
 				size,
 				1.0,
 				f(c, 0, size),
-				false,
-				t2.Sub(t0) / time.Millisecond,
 				humanize.Bytes(uint64(size)),
 			}
-			return root, nil
+			t3 := time.Now()
+			performance.DownloadTime = t1.Sub(t0) / time.Millisecond
+			performance.ParseTime = t2.Sub(t1) / time.Millisecond
+			performance.ProcessTime = t3.Sub(t2) / time.Millisecond
+			return root, performance, nil
 		}
 	}
 
-	return root, errors.New("No html root")
+	return root, performance, errors.New("No html root")
 }
 
 type URL struct {
@@ -141,7 +146,7 @@ func Tree(ctx *iris.Context) {
 		})
 		ctx.SetStatusCode(iris.StatusBadRequest) // 400
 	} else {
-		child, err := GetChildren(url.URL)
+		child, performance, err := GetChildren(url.URL)
 		if err != nil {
 			ctx.JSON(iris.StatusBadRequest, iris.Map{
 				"error": err,
@@ -161,7 +166,10 @@ func Tree(ctx *iris.Context) {
 			// only update the cache if it wasn't already in the list
 			recentAsString := strings.Join(recent, "|")
 			cache.Set(cacheKey, []byte(recentAsString), 60*60*24*7) // 7 days
-			ctx.JSON(iris.StatusOK, child)
+			ctx.JSON(iris.StatusOK, iris.Map{
+				"nodes":       child,
+				"performance": performance,
+			})
 		}
 	}
 }
@@ -209,7 +217,11 @@ func main() {
 	api := iris.New(irisConfig)
 	api.Get("/tree", TreeInfo)
 	api.Post("/tree", Tree)
-	api.Static("/static", "./dist/static", 1)
+	if debug == true {
+		api.Static("/static", "./client/static", 1)
+	} else {
+		api.Static("/static", "./dist/static", 1)
+	}
 	api.Get("/", Index)
 	api.Listen("0.0.0.0:" + port)
 

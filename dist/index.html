@@ -4,8 +4,8 @@
 
 Source code for this page is on https://github.com/peterbe/go-htmltree
 
-version: 33162c68a1
-https://github.com/peterbe/go-htmltree/compare/33162c68a1...HEAD
+version: ace624afe5
+https://github.com/peterbe/go-htmltree/compare/ace624afe5...HEAD
 -->
 <head>
 <meta charset="utf-8">
@@ -64,7 +64,20 @@ https://github.com/peterbe/go-htmltree/compare/33162c68a1...HEAD
             <p ng-show="drawn" class="small">
                 Downloaded <b>{{ stats.size }}</b>.
                 <span ng-if="stats.from_cache">From server cache.</span>
-                <span ng-if="stats.took">Took <b>{{ stats.took }} seconds</b>.</span>
+                <span
+                  ng-if="stats.took && !stats._show_advanced"
+                  ng-click="toggleAdvancedStats()"
+                  title="Click to show more details stats about how long it took">
+                  Took <b>{{ stats.took }} seconds</b>.
+                </span>
+                <span
+                  ng-if="stats.took && stats._show_advanced"
+                  ng-click="toggleAdvancedStats()"
+                  title="Closed advanced stats">
+                  <b>{{ stats.took_download }}ms</b> to download,
+                  <b>{{ stats.took_parse }}ms</b> to parse,
+                  <b>{{ stats.took_process }}ms</b> to parse.
+                </span>
             </p>
         </form>
 
@@ -140,7 +153,7 @@ https://github.com/peterbe/go-htmltree/compare/33162c68a1...HEAD
 
 <script src="/static/vendor-a9f2185.min.js"></script>
 
-<script src="/static/bundle-7a2dc6f.min.js"></script>
+<script src="/static/bundle-2174413.min.js"></script>
 
 </body>
 </html>
